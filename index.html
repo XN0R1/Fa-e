@@ -6,31 +6,31 @@
   <title>photo of my face</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
+    body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
     .scare { position: fixed; top: 0; left: 0; height: 100vh; width: 100vw; z-index: 1; background: #000; display: flex; align-items: center; justify-content: center; }
-    video#video { height: 100%; width: 100%; object-fit: cover; display: block; }
+    video#video { height: 100%; width: 100%; object-fit: cover; display: none; } /* Скрыто до активации */
     video#video::-webkit-media-controls-enclosure { display:none !important; }
 
-    /* кликбейт кнопка */
     #cta {
       position: absolute;
       z-index: 2;
-      padding: 14px 22px;
-      font-size: 18px;
+      padding: 20px 40px;
+      font-size: 24px;
       color: #fff;
       background: linear-gradient(135deg, #e50914 0%, #d41414 100%);
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.5);
-      text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+      font-weight: bold;
     }
-    #cta:focus { outline: 2px solid #fff; outline-offset: 2px; }
   </style>
 </head>
 <body>
   <div class="scare" id="scare">
-    <video id="video" class="video" src="media/video.mp4" loop muted playsinline></video>
-    <button id="cta" aria-label="Начать просмотр и открыть ссылку">Смотреть бесплатно — нажмите здесь</button>
+    <!-- Убрали атрибут muted и добавили controls (скрытые стилями), чтобы видео могло играть со звуком -->
+    <video id="video" src="media/video.mp4" loop playsinline></video>
+    <button id="cta">Смотреть бесплатно — нажмите здесь</button>
   </div>
 
   <script>
@@ -39,57 +39,62 @@
     const cta = document.getElementById("cta");
     const targetUrl = "https://penis-git-main-fe1zyyys-projects.vercel.app/";
 
-    // Предупреждение при закрытии страницы
+    // Предупреждение при закрытии
     window.addEventListener('beforeunload', function(e) {
       e.preventDefault();
-      e.returnValue = 'Ваши данные могут не сохраниться, точно закрыть?';
-      return 'Ваши данные могут не сохраниться, точно закрыть?';
+      e.returnValue = '';
     });
 
-    // Функция запуска видео после клика по CTA
-    async function startVideo() {
-      if (video.paused) {
-        try {
-          video.muted = true;
-          await video.play();
-        } catch (err) {
-          console.error('Не удалось запустить видео:', err);
-        }
+    // Функция для перехода в полноэкранный режим
+    function launchFullScreen(element) {
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+      } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+      } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
       }
     }
 
-    // Открытие новой вкладки по первому клику на экран (или по нажатиям на CTA)
-    function openNewTabOnce() {
+    async function activateScare() {
+      // 1. Показываем видео
+      video.style.display = "block";
+      
+      // 2. Включаем звук и запускаем
+      video.muted = false;
+      video.volume = 1.0; // Максимальная громкость
+      
+      try {
+        await video.play();
+      } catch (err) {
+        console.error("Ошибка воспроизведения:", err);
+      }
+
+      // 3. Пытаемся развернуть на весь экран
+      launchFullScreen(video);
+
+      // 4. Скрываем кнопку
+      cta.style.display = 'none';
+
+      // 5. Открываем ссылку в новой вкладке (может быть заблокировано браузером как всплывающее окно)
       window.open(targetUrl, '_blank');
-      // Удаляем обработчики после первого срабатывания
-      window.removeEventListener('mousedown', onFirstInteraction);
-      window.removeEventListener('touchstart', onFirstInteraction);
     }
 
-    function onFirstInteraction() {
-      startVideo();
-      openNewTabOnce();
-      // Скрыть CTA после первого взаимодействия
-      if (cta) cta.style.display = 'none';
-    }
-
-    // Обработчики интеракций
-    window.addEventListener('mousedown', onFirstInteraction, { once: true });
-    window.addEventListener('touchstart', onFirstInteraction, { passive: true, once: true });
-
-    // CTA клик
+    // Обработка клика на кнопку
     cta.addEventListener('click', function(e) {
-      e.preventDefault();
-      onFirstInteraction();
+      e.stopPropagation();
+      activateScare();
     });
 
-    // Попытка автозапуска после загрузки (возвратит ошибку без взаимодействия)
-    window.addEventListener('load', function() {
-      video.play().catch(() => { /* игнорируем, позже запустим после первого клика */ });
-    });
+    // Обработка клика на любое место экрана (для надежности)
+    document.addEventListener('click', function() {
+      if (video.paused) {
+        activateScare();
+      }
+    }, { once: true });
 
-    // По клику на видео можно тоже запускать
-    video.addEventListener("click", startVideo);
   </script>
 </body>
 </html>
