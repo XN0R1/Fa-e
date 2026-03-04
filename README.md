@@ -1,1 +1,1 @@
-take it away i'm not greedy  //  Забери это, я не жадный.
+take it away i'm not greedy  //  
