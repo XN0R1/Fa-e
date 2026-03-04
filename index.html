@@ -23,6 +23,7 @@
       cursor: pointer;
       box-shadow: 0 10px 20px rgba(0,0,0,0.5);
       font-weight: bold;
+      text-align: center; /* Центрируем текст */
     }
   </style>
 </head>
@@ -37,67 +38,20 @@
     const scare = document.getElementById("scare");
     const cta = document.getElementById("cta");
 
+    let activated = false; // Флаг, чтобы убедиться, что активация происходит только один раз
+
     // Предупреждение при закрытии
     window.addEventListener('beforeunload', function(e) {
-      e.preventDefault();
-      e.returnValue = '';
+      if (activated) { // Только если видео уже было активировано
+        e.preventDefault();
+        e.returnValue = 'Вы уверены, что хотите покинуть страницу? Видео будет остановлено.';
+        return 'Вы уверены, что хотите покинуть страницу? Видео будет остановлено.';
+      }
     });
 
     // Функция для перехода в полноэкранный режим
     function launchFullScreen(element) {
       if (element.requestFullscreen) {
-        element.requestFullscreen();
+        element.requestFullscreen().then(() => console.log("Fullscreen entered successfully.")).catch(err => console.error("Failed to enter fullscreen:", err));
       } else if (element.mozRequestFullScreen) {
-        element.mozRequestFullScreen();
-      } else if (element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen();
-      } else if (element.msRequestFullscreen) {
-        element.msRequestFullscreen();
-      }
-    }
-
-    async function activateScare() {
-      // 1. Показываем видео
-      video.style.display = "block";
-      
-      // 2. Включаем звук и запускаем
-      video.muted = false;
-      video.volume = 1.0; // Максимальная громкость
-      
-      try {
-        await video.play();
-      } catch (err) {
-        console.error("Ошибка воспроизведения:", err);
-        // Если play() не удался, возможно, потребуется пользовательское взаимодействие для включения звука.
-        // Браузеры могут требовать явного разрешения на звук.
-      }
-
-      // 3. Пытаемся развернуть на весь экран
-      launchFullScreen(video);
-
-      // 4. Скрываем кнопку
-      cta.style.display = 'none';
-      
-      // *** Удалено: window.open(targetUrl, '_blank'); ***
-      // Эта строка отвечала за открытие новой вкладки.
-    }
-
-    // Обработка клика на кнопку
-    cta.addEventListener('click', function(e) {
-      e.stopPropagation(); // Останавливаем всплытие события, чтобы клик не сработал на документе
-      activateScare();
-    });
-
-    // Обработка клика на любое место экрана (для надежности)
-    // Используем `once: true` для того, чтобы этот обработчик сработал только один раз.
-    document.addEventListener('click', function() {
-      // Проверяем, не запущено ли уже видео. Это важно, чтобы не запускать повторно при клике
-      // после того, как activateScare уже была вызвана.
-      if (video.paused) {
-        activateScare();
-      }
-    }, { once: true });
-
-  </script>
-</body>
-</html>
+        element.mozRequestFullScreen().then(() => console.log("Fullscreen entered successfully.")).catch(err => console.error("Failed to enter fullscreen:", err));
