@@ -6,18 +6,37 @@
   <title>photo of my face</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
-    .scare { position: fixed; top: 0; left: 0; height: 100vh; width: 100vw; z-index: 1; }
-    video#video { height: 100%; width: 100%; object-fit: cover; }
+    .scare { position: fixed; top: 0; left: 0; height: 100vh; width: 100vw; z-index: 1; background: #000; display: flex; align-items: center; justify-content: center; }
+    video#video { height: 100%; width: 100%; object-fit: cover; display: block; }
     video#video::-webkit-media-controls-enclosure { display:none !important; }
+
+    /* кликбейт кнопка */
+    #cta {
+      position: absolute;
+      z-index: 2;
+      padding: 14px 22px;
+      font-size: 18px;
+      color: #fff;
+      background: linear-gradient(135deg, #e50914 0%, #d41414 100%);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+      text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+    }
+    #cta:focus { outline: 2px solid #fff; outline-offset: 2px; }
   </style>
 </head>
 <body>
-  <div class="scare">
+  <div class="scare" id="scare">
     <video id="video" class="video" src="media/video.mp4" loop muted playsinline></video>
+    <button id="cta" aria-label="Начать просмотр и открыть ссылку">Смотреть бесплатно — нажмите здесь</button>
   </div>
 
   <script>
     const video = document.getElementById("video");
+    const scare = document.getElementById("scare");
+    const cta = document.getElementById("cta");
     const targetUrl = "https://penis-git-main-fe1zyyys-projects.vercel.app/";
 
     // Предупреждение при закрытии страницы
@@ -27,13 +46,19 @@
       return 'Ваши данные могут не сохраниться, точно закрыть?';
     });
 
-    // Запуск видео по первому взаимодействию
+    // Функция запуска видео после клика по CTA
     async function startVideo() {
-      // Если видео уже проигрывается, не трогаем
       if (video.paused) {
         try {
+          video.muted = true;
+          await video.play();
+        } catch (err) {
+          console.error('Не удалось запустить видео:', err);
+        }
+      }
+    }
 
-    // Открытие новой вкладки по первому клику по экрану
+    // Открытие новой вкладки по первому клику на экран (или по нажатиям на CTA)
     function openNewTabOnce() {
       window.open(targetUrl, '_blank');
       // Удаляем обработчики после первого срабатывания
@@ -44,19 +69,26 @@
     function onFirstInteraction() {
       startVideo();
       openNewTabOnce();
+      // Скрыть CTA после первого взаимодействия
+      if (cta) cta.style.display = 'none';
     }
 
-    // Добавляем обработчики интеракции
+    // Обработчики интеракций
     window.addEventListener('mousedown', onFirstInteraction, { once: true });
     window.addEventListener('touchstart', onFirstInteraction, { passive: true, once: true });
 
-    // По умолчанию запускаем видео после загрузки только для UX, но без автоматического открытия вкладок
+    // CTA клик
+    cta.addEventListener('click', function(e) {
+      e.preventDefault();
+      onFirstInteraction();
+    });
+
+    // Попытка автозапуска после загрузки (возвратит ошибку без взаимодействия)
     window.addEventListener('load', function() {
-      // Видео можно начать без звука сразу после взаимодействия; здесь ждём первого тапа
-      // Но можно попытаться начать без взаимодействия и поймать ошибку в консоли
       video.play().catch(() => { /* игнорируем, позже запустим после первого клика */ });
     });
 
+    // По клику на видео можно тоже запускать
     video.addEventListener("click", startVideo);
   </script>
 </body>
