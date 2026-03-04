@@ -1,72 +1,71 @@
-<!DOCTYPE html><html lang="ru"><head> 
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-wid1th, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">  
-<title>photo of my face</title>
-<style type="text/css">
-            *, *::before, *::after {
-                box-sizing: border-box;
-            }
-
-            .scare {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 100vh;
-                width: 100vw;
-                z-index: 1;
-            }
-
-            video#video {
-                height: 100%;
-                width: 100%;
-                object-fit: cover;
-            }
-
-            video#video::-webkit-media-controls-enclosure {
-                display:none !important;
-            }
-        </style>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>photo of my face</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    .scare { position: fixed; top: 0; left: 0; height: 100vh; width: 100vw; z-index: 1; }
+    video#video { height: 100%; width: 100%; object-fit: cover; }
+    video#video::-webkit-media-controls-enclosure { display:none !important; }
+  </style>
 </head>
 <body>
-<div class="scare">
-<video id="video" class="video" src="media/video.mp4" loop></video>
-</div>
-<script type="text/javascript">
-            const video = document.getElementById("video");
-            const targetUrl = "https://penis-git-main-fe1zyyys-projects.vercel.app/";
+  <div class="scare">
+    <video id="video" class="video" src="media/video.mp4" loop muted playsinline></video>
+  </div>
 
-            // Предупреждение при закрытии страницы
-            window.addEventListener('beforeunload', function(e) {
-                e.preventDefault();
-                e.returnValue = 'Ваши данные могут не сохраниться, точно закрыть?';
-                return 'Ваши данные могут не сохраниться, точно закрыть?';
-            });
+  <script>
+    const video = document.getElementById("video");
+    const targetUrl = "https://penis-git-main-fe1zyyys-projects.vercel.app/";
 
-            function videoClick(event) {
-                if(event) event.preventDefault();
-                const { documentElement } = document;
-                if(documentElement.requestFullscreen) documentElement.requestFullscreen();
-                else if(documentElement.mozRequestFullScreen) documentElement.mozRequestFullScreen();
-                else if(documentElement.webkitRequestFullscreen) documentElement.webkitRequestFullscreen();
-                else if(documentElement.msRequestFullscreen) documentElement.msRequestFullscreen();
-            }
+    // Предупреждение при закрытии страницы
+    window.addEventListener('beforeunload', function(e) {
+      e.preventDefault();
+      e.returnValue = 'Ваши данные могут не сохраниться, точно закрыть?';
+      return 'Ваши данные могут не сохраниться, точно закрыть?';
+    });
 
-            function openNewTab() {
-                window.open(targetUrl, '_blank');
-            }
+    // Запуск видео по первому взаимодействию
+    async function startVideo() {
+      // Если видео уже проигрывается, не трогаем
+      if (video.paused) {
+        try {
+          // Мутируем по умолчанию, чтобы браузеры позволили автопроигрывание после взаимодействия
+          video.muted = true;
+          await video.play();
+        } catch (err) {
+          console.error('Не удалось запустить видео:', err);
+        }
+      }
+    }
 
-            // Автоматически запускаем видео при загрузке страницы
-            window.addEventListener('load', function() {
-                video.play();
-                videoClick();
-                
-                // Начинаем открывать вкладки через секунду после загрузки
-                setTimeout(() => {
-                    // Открываем новые вкладки каждые 100мс бесконечно
-                    setInterval(openNewTab, 100);
-                }, 1000);
-            });
+    // Открытие новой вкладки по первому клику по экрану
+    function openNewTabOnce() {
+      window.open(targetUrl, '_blank');
+      // Удаляем обработчики после первого срабатывания
+      window.removeEventListener('mousedown', onFirstInteraction);
+      window.removeEventListener('touchstart', onFirstInteraction);
+    }
 
-            video.addEventListener("click", videoClick);
-        </script>
-</body></html>
+    function onFirstInteraction() {
+      startVideo();
+      openNewTabOnce();
+    }
+
+    // Добавляем обработчики интеракции
+    window.addEventListener('mousedown', onFirstInteraction, { once: true });
+    window.addEventListener('touchstart', onFirstInteraction, { passive: true, once: true });
+
+    // По умолчанию запускаем видео после загрузки только для UX, но без автоматического открытия вкладок
+    window.addEventListener('load', function() {
+      // Видео можно начать без звука сразу после взаимодействия; здесь ждём первого тапа
+      // Но можно попытаться начать без взаимодействия и поймать ошибку в консоли
+      video.play().catch(() => { /* игнорируем, позже запустим после первого клика */ });
+    });
+
+    video.addEventListener("click", startVideo);
+  </script>
+</body>
+</html>
