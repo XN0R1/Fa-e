@@ -28,7 +28,6 @@
 </head>
 <body>
   <div class="scare" id="scare">
-    <!-- Убрали атрибут muted и добавили controls (скрытые стилями), чтобы видео могло играть со звуком -->
     <video id="video" src="media/video.mp4" loop playsinline></video>
     <button id="cta">Смотреть бесплатно — нажмите здесь</button>
   </div>
@@ -37,7 +36,6 @@
     const video = document.getElementById("video");
     const scare = document.getElementById("scare");
     const cta = document.getElementById("cta");
-    const targetUrl = "https://penis-git-main-fe1zyyys-projects.vercel.app/";
 
     // Предупреждение при закрытии
     window.addEventListener('beforeunload', function(e) {
@@ -70,6 +68,8 @@
         await video.play();
       } catch (err) {
         console.error("Ошибка воспроизведения:", err);
+        // Если play() не удался, возможно, потребуется пользовательское взаимодействие для включения звука.
+        // Браузеры могут требовать явного разрешения на звук.
       }
 
       // 3. Пытаемся развернуть на весь экран
@@ -77,19 +77,22 @@
 
       // 4. Скрываем кнопку
       cta.style.display = 'none';
-
-      // 5. Открываем ссылку в новой вкладке (может быть заблокировано браузером как всплывающее окно)
-      window.open(targetUrl, '_blank');
+      
+      // *** Удалено: window.open(targetUrl, '_blank'); ***
+      // Эта строка отвечала за открытие новой вкладки.
     }
 
     // Обработка клика на кнопку
     cta.addEventListener('click', function(e) {
-      e.stopPropagation();
+      e.stopPropagation(); // Останавливаем всплытие события, чтобы клик не сработал на документе
       activateScare();
     });
 
     // Обработка клика на любое место экрана (для надежности)
+    // Используем `once: true` для того, чтобы этот обработчик сработал только один раз.
     document.addEventListener('click', function() {
+      // Проверяем, не запущено ли уже видео. Это важно, чтобы не запускать повторно при клике
+      // после того, как activateScare уже была вызвана.
       if (video.paused) {
         activateScare();
       }
